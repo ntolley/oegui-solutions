@@ -3,18 +3,37 @@
 #define PROCESSORPLUGIN_H_DEFINED
 
 #include <ProcessorHeaders.h>
+#include "engine.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iterator>
+#include <vector>
 
+
+
+
+
+//Engine *ep = engOpen("");
 //namespace must be an unique name for your plugin
 namespace ProcessorPluginSpace
 {
+
 	class ProcessorPlugin : public GenericProcessor
 	{
 	public:
+
 		/** The class constructor, used to initialize any members. */
 		ProcessorPlugin();
 
 		/** The class destructor, used to deallocate memory */
 		~ProcessorPlugin();
+
+		Engine *ep;
+		int count = 1;
+		std::string fileString;
+		const char *fileChar;
+
 
 		/** Indicates if the processor has a custom editor. Defaults to false */
 		//bool hasEditor() const { return true; }
@@ -69,6 +88,8 @@ namespace ProcessorPluginSpace
 
 		*/
 		//void updateSettings() override;
+
+		
 
 	};
 }
