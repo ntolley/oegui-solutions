@@ -1,21 +1,16 @@
 /*
 ------------------------------------------------------------------
-
 This file is part of the Open Ephys GUI
 Copyright (C) 2016 Open Ephys
-
 ------------------------------------------------------------------
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -70,20 +65,17 @@ extern "C" EXPORT int getPluginInfo(int index, Plugin::PluginInfo* info)
 		break;
 		/**
 		Examples for other plugin types
-
 		For a RecordEngine, which provides formats for recording data
 		case x:
 		info->type = Plugin::PLUGIN_TYPE_RECORD_ENGINE;
 		info->recordEngine.name = "Record Engine Name";
 		info->recordEngine.creator = &(Plugin::createRecordEngine<RecordEngineClassName>);
 		break;
-
 		For a DataThread, which allows to use the existing SourceNode to connect to an asynchronous data source, such as acquisition hardware
 		case x:
 		info->type = Plugin::PLUGIN_TYPE_DATA_THREAD;
 		info->dataThread.name = "Source name"; //Name that will appear on the processor list
 		info->dataThread.creator = &createDataThread<DataThreadClassName>;
-
 		For a FileSource, which allows importing data formats into the FileReader
 		case x:
 		info->type = Plugin::PLUGIN_TYPE_FILE_SOURCE;

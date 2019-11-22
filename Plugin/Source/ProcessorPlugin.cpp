@@ -8,11 +8,13 @@ using namespace ProcessorPluginSpace;
 
 ProcessorPlugin::ProcessorPlugin() : GenericProcessor("Processor Name")
 {
+	Engine *ep;
+	ep = engOpen("");
 
 	std::ifstream infile{ "D:\\Borton Lab\\cpp_mat_func\\matlabPlugin.txt" }; //reads .txt into string variable
 	fileString = { std::istreambuf_iterator<char>(infile), std::istreambuf_iterator<char>() };
 	fileChar = fileString.c_str(); //must convert to const char array for matlab engine
-	
+
 }
 
 ProcessorPlugin::~ProcessorPlugin()
@@ -35,7 +37,7 @@ void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 	}
 
 
-	
+
 	//Dynamic arrays, flattens individual channels (chanBuf) in one long array
 	double* allBuf = new double[nSamples*numChannels]; //all channel data from unaltered buffer stored here
 	double* resBuf = new double[nSamples*numChannels]; //all matlab processed data stored here
@@ -46,29 +48,29 @@ void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 	//Iterate over every channel 
 	for (int chan = 0; chan < numChannels; chan++) {
 		const float* reBufPtr = buffer.getReadPointer(chan);
-		memcpy((void *)floatChanBuf, (void *)reBufPtr, nSamples*sizeof(float));
-		std::copy(floatChanBuf,floatChanBuf + nSamples,doubleChanBuf); //Implicitly converts float to double
+		memcpy((void *)floatChanBuf, (void *)reBufPtr, nSamples * sizeof(float));
+		std::copy(floatChanBuf, floatChanBuf + nSamples, doubleChanBuf); //Implicitly converts float to double
 
 		//Places single channel in one long array
-		memcpy((void *)(allBuf+(chan*nSamples)), (void *)doubleChanBuf, nSamples*sizeof(double));
+		memcpy((void *)(allBuf + (chan*nSamples)), (void *)doubleChanBuf, nSamples * sizeof(double));
 
 	}
-	
+
 	//Create mxArrays that will be passed to matlab engine
 	mxArray *T, *nS, *nC;
-	T = mxCreateDoubleMatrix(1,numChannels*nSamples, mxREAL);
+	T = mxCreateDoubleMatrix(1, numChannels*nSamples, mxREAL);
 	nS = mxCreateDoubleScalar(nSamples);
 	nC = mxCreateDoubleScalar(numChannels);
-	
+
 	//Write buffer data to mxArray
 	double* ptr = mxGetPr(T);
-	memcpy((void*)ptr, (void*)allBuf, nSamples*numChannels*sizeof(double));
+	memcpy((void*)ptr, (void*)allBuf, nSamples*numChannels * sizeof(double));
 
 	//Send array to matlab workspace
 	engPutVariable(ep, "T", T);
 	engPutVariable(ep, "nSamples", nS);
 	engPutVariable(ep, "numChannels", nC);
-	
+
 
 
 
@@ -89,7 +91,7 @@ void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 	engEvalString(ep, "R = X(:)';");
 	//***********************
 
-	
+
 
 
 
@@ -97,7 +99,7 @@ void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 	mxArray *resVar;
 	resVar = engGetVariable(ep, "R");
 	double* resPtr = mxGetPr(resVar);
-	memcpy((void *)resBuf, (void *)resPtr, numChannels*nSamples*sizeof(double));
+	memcpy((void *)resBuf, (void *)resPtr, numChannels*nSamples * sizeof(double));
 
 	//Single channel output data stored here to write back into buffer
 	float* floatResBufChan = new float[nSamples];
@@ -106,22 +108,22 @@ void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 	//Write result to buffer
 	for (int chan = 0; chan < numChannels; chan++) {
 		float* bufPtr = buffer.getWritePointer(chan);
-	
-		memcpy((void *)doubleResBufChan, (void *)(resBuf + (chan*nSamples)), nSamples*sizeof(double));
+
+		memcpy((void *)doubleResBufChan, (void *)(resBuf + (chan*nSamples)), nSamples * sizeof(double));
 		std::copy(doubleResBufChan, doubleResBufChan + nSamples, floatResBufChan);
 
-		memcpy((void *)bufPtr, (void *)floatResBufChan, nSamples*sizeof(float));
+		memcpy((void *)bufPtr, (void *)floatResBufChan, nSamples * sizeof(float));
 
 
 	}
-	
+
 	//clear memory
 	mxDestroyArray(T);
 	mxDestroyArray(nS);
 	mxDestroyArray(nC);
 	mxDestroyArray(resVar);
 
-	
+
 	delete[] allBuf;
 	delete[] resBuf;
 	delete[] doubleChanBuf;
@@ -130,4 +132,3 @@ void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 	delete[] doubleResBufChan;
 
 }
-

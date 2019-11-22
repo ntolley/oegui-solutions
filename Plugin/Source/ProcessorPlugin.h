@@ -45,25 +45,20 @@ namespace ProcessorPluginSpace
 		//bool isReady();
 
 		/** Defines the functionality of the processor.
-
 		The process method is called every time a new data buffer is available.
-
 		Processors can either use this method to add new data, manipulate existing
 		data, or send data to an external target (such as a display or other hardware).
-
 		Continuous signals arrive in the "buffer" variable, event data (such as TTLs
 		and spikes) is contained in the "events" variable.
 		*/
 		void process(AudioSampleBuffer& buffer) override;
 
 		/** Handles events received by the processor
-
-		Called automatically for each received event whenever checkForEvents() is called from process()		
+		Called automatically for each received event whenever checkForEvents() is called from process()
 		*/
 		//void handleEvent(const EventChannel* eventInfo, const MidiMessage& event, int samplePosition) override;
 
 		/** Handles spikes received by the processor
-
 		Called automatically for each received event whenever checkForEvents(true) is called from process()
 		*/
 		//void handleSpike(const SpikeChannel* spikeInfo, const MidiMessage& event, int samplePosition) override;
@@ -80,16 +75,14 @@ namespace ProcessorPluginSpace
 		//void loadCustomParametersFromXml() override;
 
 		/** Optional method called every time the signal chain is refreshed or changed in any way.
-
 		Allows the processor to handle variations in the channel configuration or any other parameter
 		passed down the signal chain. The processor can also modify here the settings structure, which contains
 		information regarding the input and output channels as well as other signal related parameters. Said
 		structure shouldn't be manipulated outside of this method.
-
 		*/
 		//void updateSettings() override;
 
-		
+
 
 	};
 }
