@@ -6,7 +6,7 @@ The current implentation sends buffer data to
 ## Configuring Plugin (Visual Studio 2017)
 1) Edit file path in CMakeLists.txt with a path to a built version of plugin-GUI
 ```
-set(ENV{GUI_BASE_DIR} C:/Users/tolle/Documents/GitHub/plugin-GUI)
+set(ENV{GUI_BASE_DIR} /PathToFolder/plugin-GUI)
 ````
 2) Create build files using CMake https://cmake.org/
 	a) Set Source folder as \PathToFolder\matlab_filter

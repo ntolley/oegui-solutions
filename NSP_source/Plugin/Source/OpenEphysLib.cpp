@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <PluginInfo.h>
-#include "ProcessorPlugin.h"
+#include "NSPSource.h"
 #include <string>
 
 #ifdef WIN32
@@ -43,7 +43,7 @@ extern "C" EXPORT void getLibInfo(Plugin::LibraryInfo* info)
 	info->apiVersion = PLUGIN_API_VER;
 
 	//Name of the Library, used only for information
-	info->name = "PLUGINLIBRARYNAME";
+	info->name = "NSP Source";
 
 	//Version of the library, used only for information
 	info->libVersion = 1;
@@ -56,18 +56,17 @@ extern "C" EXPORT int getPluginInfo(int index, Plugin::PluginInfo* info)
 	{
 		//one case per plugin. This example is for a processor which connects directly to the signal chain
 	case 0:
-		//Type of plugin. See "Source/Processors/PluginManager/OpenEphysPlugin.h" for complete info about the different type structures
-		info->type = PluginType::PLUGIN_TYPE_PROCESSOR;
+		info->type = Plugin::PLUGIN_TYPE_DATA_THREAD;
+		info->dataThread.name = "NSP Source"; //Name that will appear on the processor list
+		info->dataThread.creator = &createDataThread<NSPSource>;
 
-		//Processor name
-		info->processor.name = "PLUGINGUINAME"; //Processor name shown in the GUI
 
-		//Type of processor. Can be FilterProcessor, SourceProcessor, SinkProcessor or UtilityProcessor. Specifies where on the processor list will appear
-		info->processor.type = ProcessorType::FilterProcessor;
-
-		//Class factory pointer. Replace "ProcessorPluginSpace::ProcessorPlugin" with the namespace and class name.
-		info->processor.creator = &(Plugin::createProcessor<ProcessorPluginSpace::ProcessorPlugin>);
 		break;
+
+
+
+
+
 		/**
 		Examples for other plugin types
 
