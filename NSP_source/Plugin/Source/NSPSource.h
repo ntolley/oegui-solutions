@@ -14,9 +14,7 @@
 #include <iostream>
 #include <fstream>
 
-//namespace must be an unique name for your plugin
-namespace NSPSourceSpace
-{
+
 	class NSPSource : public DataThread
 	{
 	public:
@@ -54,7 +52,7 @@ namespace NSPSourceSpace
 		float getSampleRate();
 
 		/** Returns the volts per bit of the data source.*/
-		float getBitVolts(Channel* chan);
+		float getBitVolts();
 
 		/** Returns the number of event channels of the data source.*/
 		int getNumEventChannels();
@@ -95,6 +93,6 @@ namespace NSPSourceSpace
 		int64 elapsedTime;
 
 	};
-}
+
 
 #endif

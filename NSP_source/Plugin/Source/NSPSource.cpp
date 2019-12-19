@@ -272,8 +272,14 @@ float NSPSource::getSampleRate()
 	return 1000;
 }
 
+///** Returns the volts per bit of the data source.*/
+//float NSPSource::getBitVolts(Channel* chan)
+//{
+//	return 1;
+//}
+
 /** Returns the volts per bit of the data source.*/
-float NSPSource::getBitVolts(Channel* chan)
+float NSPSource::getBitVolts()
 {
 	return 1;
 }
