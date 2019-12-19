@@ -246,7 +246,7 @@ int CBlackrock::connection_init_EMG() // BLACKROCK
 
 
 	//cbSdkTrialEvent trialevent;
-	resTest2 = cbSdkInitTrialData(m_blkrckInstance, NULL, &m_trialCont, NULL, NULL);
+	resTest2 = cbSdkInitTrialData(m_blkrckInstance, NULL, NULL, &m_trialCont, NULL, NULL);
 
 
 	// BUFFER FOR FASTER UPDATING
@@ -403,7 +403,7 @@ int CBlackrock::connection_init_neural() // BLACKROCK
 	}
 
 	//INITIALIZE DATA STRUCTURES
-	resTest2 = cbSdkInitTrialData(m_blkrckInstance, &m_trialEvent, NULL, NULL, NULL);
+	resTest2 = cbSdkInitTrialData(m_blkrckInstance, NULL, &m_trialEvent, NULL, NULL, NULL);
 
 	bool bTrialDouble = false;
 	resTest2 = cbSdkGetTrialConfig(m_blkrckInstance, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &bTrialDouble);
@@ -634,7 +634,7 @@ void CBlackrock::get_EMG(const int CHANNEL2USE_m1
 
 	cbSdkResult resTest2;
 	// INIT TRIAL (EVERY TIME)
-	resTest2 = cbSdkInitTrialData(m_blkrckInstance, NULL, &m_trialCont, NULL, NULL);
+	resTest2 = cbSdkInitTrialData(m_blkrckInstance, NULL, NULL, &m_trialCont, NULL, NULL);
 
 	// BUFFER FOR FASTER UPDATING - smaller size (20 samples)
 	for (int chio = 0; chio < m_trialCont.count; chio++)
@@ -718,7 +718,9 @@ void CBlackrock::get_spikes(UINT32*** spikes_32
 {
 	cbSdkResult resTest2;
 	// INIT TRIAL (EVERY TIME)
-	resTest2 = cbSdkInitTrialData(m_blkrckInstance, &m_trialEvent, NULL, NULL, NULL);
+	//resTest2 = cbSdkInitTrialData(m_blkrckInstance, &m_trialEvent, NULL, NULL, NULL);
+	resTest2 = cbSdkInitTrialData(m_blkrckInstance, NULL,&m_trialEvent, NULL, NULL, NULL);
+
 
 	// GET CONFIG
 	bool bTrialDouble = false;
@@ -744,9 +746,10 @@ void CBlackrock::get_spikes(UINT32*** spikes_32
 				}
 			}
 		}
-
+		
 		// Fill values for non-empty digital or serial channels
-		if (ch == MAX_CHANS_DIGITAL_IN || ch == MAX_CHANS_SERIAL)
+		//if (ch == MAX_CHANS_DIGITAL_IN || ch == MAX_CHANS_SERIAL)
+		if (ch == cbNUM_DIGIN_CHANS || ch == cbNUM_SERIAL_CHANS)
 		{
 			UINT32 num_samples = m_trialEvent.num_samples[channel][0];
 			// m_trialEvent.waveforms[channel] = NULL;
