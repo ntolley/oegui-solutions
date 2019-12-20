@@ -92,6 +92,8 @@
 		INT64 cbtime1;
 		int64 elapsedTime;
 
+		DataBuffer* dataBuffer;
+
 	};
 
 
