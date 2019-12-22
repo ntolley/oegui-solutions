@@ -279,7 +279,7 @@ float NSPSource::getSampleRate()
 //}
 
 /** Returns the volts per bit of the data source.*/
-float NSPSource::getBitVolts()
+float NSPSource::getBitVolts(DataChannel* chan)
 {
 	return 1;
 }

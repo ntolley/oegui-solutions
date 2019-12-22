@@ -3,6 +3,14 @@
 #define NSPTEST_H_DEFINED
 
 #include <DataThreadHeaders.h>
+#include <stdio.h>
+#include <thread>
+#include <string.h>
+#include <chrono>
+#include <thread>
+#include <math.h>
+#include <iostream>
+#include <fstream>
 
 
 
@@ -15,58 +23,100 @@ public:
 	/** The class destructor, used to deallocate memory */
 	~NSPTest();
 
-	/** Indicates if the processor has a custom editor. Defaults to false */
-	//bool hasEditor() const { return true; }
+	/** Calls 'updateBuffer()' continuously while the thread is being run.*/
+	// **figure out why this is overridden**
+	//void run() override;
+	void run();
 
-	/** If the processor has a custom editor, this method must be defined to instantiate it. */
-	//AudioProcessorEditor* createEditor() override;
 
-	/** Optional method that informs the GUI if the processor is ready to function. If false acquisition cannot start. Defaults to true */
-	//bool isReady();
+	/** Returns the address of the DataBuffer that the input source will fill.*/
+	//DataBuffer* getBufferAddress(int subProcessor);
 
-	/** Defines the functionality of the processor.
+	/** Called when the chain updates, to add, remove or resize the sourceBuffers' DataBuffers as needed*/
+	void resizeBuffers();
 
-	The process method is called every time a new data buffer is available.
+	/** Fills the DataBuffer with incoming data. This is the most important
+	method for each DataThread.*/
+	bool updateBuffer();
 
-	Processors can either use this method to add new data, manipulate existing
-	data, or send data to an external target (such as a display or other hardware).
+	/** Experimental method used for testing data sources that can deliver outputs.*/
+	void setOutputHigh();
 
-	Continuous signals arrive in the "buffer" variable, event data (such as TTLs
-	and spikes) is contained in the "events" variable.
-	*/
+	/** Experimental method used for testing data sources that can deliver outputs.*/
+	void setOutputLow();
 
-	/** Handles events received by the processor
+	/** Returns true if the data source is connected, false otherwise.*/
+	bool foundInputSource();
 
-	Called automatically for each received event whenever checkForEvents() is called from process()
-	*/
-	//void handleEvent(const EventChannel* eventInfo, const MidiMessage& event, int samplePosition) override;
+	/** Initializes data transfer.*/
+	bool startAcquisition();
 
-	/** Handles spikes received by the processor
+	/** Stops data transfer.*/
+	bool stopAcquisition();
 
-	Called automatically for each received event whenever checkForEvents(true) is called from process()
-	*/
-	//void handleSpike(const SpikeChannel* spikeInfo, const MidiMessage& event, int samplePosition) override;
+	/** Returns the number of continuous headstage channels the data source can provide.*/
+	int getNumDataOutputs(DataChannel::DataChannelTypes type, int subProcessorIdx) const;
 
-	/** The method that standard controls on the editor will call.
-	It is recommended that any variables used by the "process" function
-	are modified only through this method while data acquisition is active. */
-	//void setParameter(int parameterIndex, float newValue) override;
+	/** Returns the number of TTL channels that each subprocessor generates*/
+	int getNumTTLOutputs(int subProcessorIdx) const;
 
-	/** Saving custom settings to XML. */
-	//void saveCustomParametersToXml(XmlElement* parentElement) override;
+	/** Returns the sample rate of the data source.*/
+	float getSampleRate(int subProcessorIdx) const;
 
-	/** Load custom settings from XML*/
-	//void loadCustomParametersFromXml() override;
+	/** Returns the number of virtual subprocessors this source can generate */
+	unsigned int getNumSubProcessors() const;
 
-	/** Optional method called every time the signal chain is refreshed or changed in any way.
+	/** Called to create extra event channels, apart from the default TTL ones*/
+	void createExtraEvents(Array<EventChannel*>& events);
 
-	Allows the processor to handle variations in the channel configuration or any other parameter
-	passed down the signal chain. The processor can also modify here the settings structure, which contains
-	information regarding the input and output channels as well as other signal related parameters. Said
-	structure shouldn't be manipulated outside of this method.
+	/** Returns the volts per bit of the data source.*/
+	float getBitVolts(const DataChannel* chan) const;
 
-	*/
-	//void updateSettings() override;
+	/** Notifies if the device is ready for acquisition */
+	bool isReady();
+
+	int modifyChannelName(int channel, String newName);
+
+	int modifyChannelGain(int channel, float gain);
+
+	/*  virtual void getChannelsInfo(StringArray &Names, Array<ChannelType> &type, Array<int> &stream, Array<int> &originalChannelNumber, Array<float> &gains)
+	  {
+	  }*/
+
+	void getEventChannelNames(StringArray& names);
+
+	bool usesCustomNames();
+
+	/** Changes the names of channels, if the thread needs custom names. */
+	void updateChannels();
+
+	/** Returns a pointer to the data input device, in case other processors
+	need to communicate with it.*/
+	//  virtual void* getDevice();
+
+	//void getChannelInfo(Array<ChannelCustomInfo>& infoArray);
+
+	/** Create the DataThread custom editor, if any*/
+	//GenericEditor* createEditor(SourceNode* sn);
+
+	//void createTTLChannels();
+
+	String getChannelUnits(int chanIndex);
+
+
+
+private:
+	//void setDefaultChannelNames();
+
+	SourceNode* sn;
+
+	Array<uint64> ttlEventWords;
+	Array<int64> timestamps;
+
+	Array<ChannelCustomInfo> channelInfo;
+	OwnedArray<DataBuffer> sourceBuffers;
+
+	Time timer;
 
 };
 

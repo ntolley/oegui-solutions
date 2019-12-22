@@ -25,7 +25,7 @@
 		~NSPSource();
 
 		void run(); // this isn't virtual, we can use the parent's if we want
-
+						
 		  /** Fills the DataBuffer with incoming data. This is the most important
 			method for each DataThread.*/
 		bool updateBuffer();
@@ -52,7 +52,7 @@
 		float getSampleRate();
 
 		/** Returns the volts per bit of the data source.*/
-		float getBitVolts();
+		float getBitVolts(DataChannel* chan);
 
 		/** Returns the number of event channels of the data source.*/
 		int getNumEventChannels();
