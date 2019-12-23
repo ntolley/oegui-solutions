@@ -58,7 +58,7 @@ extern "C" EXPORT int getPluginInfo(int index, Plugin::PluginInfo* info)
 	case 0:
 
 		info->type = Plugin::PLUGIN_TYPE_DATA_THREAD;
-		info->dataThread.name = "Source name"; //Name that will appear on the processor list
+		info->dataThread.name = "NSP Test"; //Name that will appear on the processor list
 		info->dataThread.creator = &createDataThread<NSPTest>;
 		break;
 
