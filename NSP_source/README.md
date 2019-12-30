@@ -3,9 +3,7 @@ This plugin functions as a data thread to stream BlackRock Neural Signal Process
 
 ## Configuring Plugin (Visual Studio 2017)
 1) Download and install Cerebus Central Suite (v 7.0.5.0) from https://www.blackrockmicro.com/technical-support/software-downloads/
-```
-set(ENV{GUI_BASE_DIR} /PathToFolder/plugin-GUI)
-````
+
 2) Copy the following files to Debug directory of plugin-GUI (same folder as open-ephys.exe) 
 '$\Blackrock'
 	- cbsdk.dll
@@ -20,7 +18,9 @@ set(ENV{GUI_BASE_DIR} /PathToFolder/plugin-GUI)
 	- cbsdkx64.lib
 
 3) Edit file path in CMakeLists.txt with a path to a built version of plugin-GUI
-
+```
+set(ENV{GUI_BASE_DIR} /PathToFolder/plugin-GUI)
+````
 4) Create build files using CMake https://cmake.org/
 	a) Set Source folder as $\PathToFolder\matlab_filter
 	b) Set Build folder as $\PathToFolder\matlab_filter\Build
