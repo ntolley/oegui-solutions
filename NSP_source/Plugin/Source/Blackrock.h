@@ -4,7 +4,6 @@
 #include <Windows.h>
 #include <vector>
 
-#pragma once
 class CBlackrock
 {
 public:
@@ -20,8 +19,6 @@ public:
 	void setComment(UINT32, std::string);
 	void setup_connection_blackrock(void);
 	int connection_init_neural(void);
-
-private:
 
 private:
 	cbSdkTrialEvent m_trialEvent;

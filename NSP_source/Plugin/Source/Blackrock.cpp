@@ -28,7 +28,7 @@ void CBlackrock::setup_connection_blackrock()
 	cbSdkVersion ver;
 	cbSdkResult res = cbSdkGetVersion(m_blkrckInstance, &ver);
 
-	// OPEN CONNECTION
+	//// OPEN CONNECTION
 	cbSdkConnection con = cbSdkConnection();
 	cbSdkConnectionType conType = CBSDKCONNECTION_DEFAULT;
 	// cbSdkInstrumentType instType;
@@ -112,14 +112,14 @@ void CBlackrock::setup_connection_blackrock()
 
 	UINT32 bActive2 = 0; //activate channel 1, deactivating 0
 
-	////DEACTIVATING THE NEURAL DATA
-	//int nchan = 96;
-	//UINT16 dchannel = 0;
-	//for(int i=1; i<=nchan; i++)
-	//{  //i must start from 1 because dchannel =0, bactive= 0 means deactivate everything
-	//	dchannel = i;
-	//	resTest2 = cbSdkSetChannelMask(m_blkrckInstance, dchannel, bActive2);
-	//}
+	//DEACTIVATING THE NEURAL DATA
+	int nchan = 96;
+	UINT16 dchannel = 0;
+	for(int i=1; i<=nchan; i++)
+	{  //i must start from 1 because dchannel =0, bactive= 0 means deactivate everything
+		dchannel = i;
+		resTest2 = cbSdkSetChannelMask(m_blkrckInstance, dchannel, bActive2);
+	}
 }
 
 int CBlackrock::connection_init_EMG() // BLACKROCK
@@ -719,7 +719,7 @@ void CBlackrock::get_spikes(UINT32*** spikes_32
 	cbSdkResult resTest2;
 	// INIT TRIAL (EVERY TIME)
 	//resTest2 = cbSdkInitTrialData(m_blkrckInstance, &m_trialEvent, NULL, NULL, NULL);
-	resTest2 = cbSdkInitTrialData(m_blkrckInstance, NULL,&m_trialEvent, NULL, NULL, NULL);
+	resTest2 = cbSdkInitTrialData(m_blkrckInstance, NULL, &m_trialEvent, NULL, NULL, NULL);
 
 
 	// GET CONFIG
@@ -746,7 +746,7 @@ void CBlackrock::get_spikes(UINT32*** spikes_32
 				}
 			}
 		}
-		
+
 		// Fill values for non-empty digital or serial channels
 		//if (ch == MAX_CHANS_DIGITAL_IN || ch == MAX_CHANS_SERIAL)
 		if (ch == cbNUM_DIGIN_CHANS || ch == cbNUM_SERIAL_CHANS)
@@ -832,3 +832,4 @@ void CBlackrock::setComment(UINT32 cbColor, std::string cbMessage)
 	cbSdkResult cbRes;
 	cbRes = cbSdkSetComment(m_blkrckInstance, cbColor, m_charset, cbMessage.c_str());
 }
+

@@ -1,12 +1,9 @@
 #include "NSPSource.h"
-#include "NSPSourceEditor.h"
-#include <windows.h>
 
 
-
+//Change all names for the relevant ones, including "Processor Name"
 NSPSource::NSPSource(SourceNode* sn) : DataThread(sn)
 {
-
 	m_blackrock = new CBlackrock;
 	m_blackrock->setup_connection_blackrock();
 
@@ -39,7 +36,6 @@ NSPSource::NSPSource(SourceNode* sn) : DataThread(sn)
 		firingRates[ch] = 0;
 		m_rasterHolder[ch] = 0;
 	}
-
 }
 
 NSPSource::~NSPSource()
@@ -93,27 +89,25 @@ NSPSource::~NSPSource()
 		delete m_blackrock;
 		m_blackrock = 0;
 	}
-
 }
 
-// We could optionally override run() to do some initialization routine
-//  before updateBuffer() starts running in a loop
-void NSPSource::run()
-{
-	// TODO initialize the NSP here? or do that in startAcquisition()?
-
+void NSPSource::run() {
 	// Call the base class's run
 	DataThread::run();
 
 }
 
 
+/** Returns the address of the DataBuffer that the input source will fill.*/
+//DataBuffer* getBufferAddress(int subProcessor) {}
+
+/** Called when the chain updates, to add, remove or resize the sourceBuffers' DataBuffers as needed*/
+void NSPSource::resizeBuffers() {}
+
 /** Fills the DataBuffer with incoming data. This is the most important
-	method for each DataThread.*/
-bool NSPSource::updateBuffer()
-{
-
-
+method for each DataThread.*/
+bool NSPSource::updateBuffer() {
+	// Compute spike rates here
 	INT64 cbtime2;
 	INT64 prev_time;
 
@@ -198,18 +192,28 @@ bool NSPSource::updateBuffer()
 	dataBuffer->addToBuffer(firingRates, &elapsedTime, &eventCode, 1);
 	loopCount++;
 
+
 	return true;
+
+}
+
+/** Experimental method used for testing data sources that can deliver outputs.*/
+void NSPSource::setOutputHigh() {
+
+}
+
+/** Experimental method used for testing data sources that can deliver outputs.*/
+void NSPSource::setOutputLow() {
+
 }
 
 /** Returns true if the data source is connected, false otherwise.*/
-bool NSPSource::foundInputSource()
-{
+bool NSPSource::foundInputSource() {
 	return true;
 }
 
 /** Initializes data transfer.*/
-bool NSPSource::startAcquisition()
-{
+bool NSPSource::startAcquisition() {
 	std::cout << "NSPSource starting acquisition." << std::endl;
 	m_blackrock->connection_init_neural();
 	debugFile.open(debugPath);
@@ -223,8 +227,7 @@ bool NSPSource::startAcquisition()
 }
 
 /** Stops data transfer.*/
-bool NSPSource::stopAcquisition()
-{
+bool NSPSource::stopAcquisition() {
 	debugFile.close();
 	std::cout << "NSPSource stopping acquisition." << std::endl;
 	//m_blackrock->connection_end();
@@ -243,67 +246,63 @@ bool NSPSource::stopAcquisition()
 	{
 		std::cout << "Thread failed to exit, continuing anyway..." << std::endl;
 	}
-
 	return true;
 }
 
-
 /** Returns the number of continuous headstage channels the data source can provide.*/
-int NSPSource::getNumHeadstageOutputs()
-{
+int NSPSource::getNumDataOutputs(DataChannel::DataChannelTypes type, int subProcessorIdx) const {
+
 	return m_noOfNeuroCh + 1;
 }
 
-/** Returns the number of continuous aux channels the data source can provide.*/
-int NSPSource::getNumAuxOutputs()
-{
-	return 0;
-}
-
-/** Returns the number of continuous ADC channels the data source can provide.*/
-int NSPSource::getNumAdcOutputs()
-{
+/** Returns the number of TTL channels that each subprocessor generates*/
+int NSPSource::getNumTTLOutputs(int subProcessorIdx) const {
+	//**Look at sdk to get this value**
+	//return m_noOfTTL
 	return 0;
 }
 
 /** Returns the sample rate of the data source.*/
-float NSPSource::getSampleRate()
-{
+float NSPSource::getSampleRate(int subProcessorIdx) const {
 	return 1000;
 }
 
-///** Returns the volts per bit of the data source.*/
-//float NSPSource::getBitVolts(Channel* chan)
-//{
-//	return 1;
-//}
-
-/** Returns the volts per bit of the data source.*/
-float NSPSource::getBitVolts(DataChannel* chan)
-{
-	return 1;
-}
-
-/** Returns the number of event channels of the data source.*/
-int NSPSource::getNumEventChannels()
-{
+/** Returns the number of virtual subprocessors this source can generate */
+unsigned int NSPSource::getNumSubProcessors() const{
+	//Not sure what this is... check sdk 
 	return 0;
 }
 
+/** Called to create extra event channels, apart from the default TTL ones*/
+void NSPSource::createExtraEvents(Array<EventChannel*>& events) {
+
+}
+
+/** Returns the volts per bit of the data source.*/
+float NSPSource::getBitVolts(const DataChannel* chan) const {
+
+	return 1;
+}
+
 /** Notifies if the device is ready for acquisition */
-bool NSPSource::isReady()
-{
+bool NSPSource::isReady() {
 	return true;
 }
 
-int NSPSource::modifyChannelName(int channel, String newName)
-{
+int NSPSource::modifyChannelName(int channel, String newName) {
 	// Do something with ChannelCustomInfo, eventually
 	return 0;
 }
 
-void NSPSource::getEventChannelNames(StringArray& names)
-{
+int NSPSource::modifyChannelGain(int channel, float gain) {
+	return 0;
+}
+
+/*  virtual void getChannelsInfo(StringArray &Names, Array<ChannelType> &type, Array<int> &stream, Array<int> &originalChannelNumber, Array<float> &gains)
+  {
+  }*/
+
+void NSPSource::getEventChannelNames(StringArray& names) {
 	names.clear();
 	for (int k = 0; k < m_noOfNeuroCh; k++)
 	{
@@ -311,26 +310,33 @@ void NSPSource::getEventChannelNames(StringArray& names)
 	}
 }
 
-int NSPSource::modifyChannelGain(int channel, float gain)
-{
-	return 0;
-}
-
-
-
-bool NSPSource::usesCustomNames()
-{
+bool NSPSource::usesCustomNames() {
 	return false;
 }
 
+/** Changes the names of channels, if the thread needs custom names. */
+void NSPSource::updateChannels() {
 
-/** Create the DataThread custom editor, if any*/
-//GenericEditor* NSPSource::createEditor(SourceNode* sn)
-//{
-//}
-
-
-void NSPSource::setDefaultChannelNames()
-{
 }
 
+/** Returns a pointer to the data input device, in case other processors
+need to communicate with it.*/
+//  virtual void* getDevice();
+
+//void getChannelInfo(Array<ChannelCustomInfo>& infoArray) {
+//
+//}
+
+/** Create the DataThread custom editor, if any*/
+//GenericEditor* createEditor(SourceNode* sn) {
+//
+//}
+
+//void createTTLChannels() {
+//
+//}
+
+String NSPSource::getChannelUnits(int chanIndex) {
+	//check what actual units are
+	return String::empty;
+}

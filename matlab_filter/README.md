@@ -1,8 +1,6 @@
 # Matlab Engine Processor Plugin
 This plugin integrates open-ephys GUI with the Matlab Engine API (https://www.mathworks.com/help/matlab/calling-matlab-engine-from-c-programs-1.html?s_tid=CRUX_lftnav) 
 
-The current implentation sends buffer data to 
-
 ## Configuring Plugin (Visual Studio 2017)
 1) Edit file path in CMakeLists.txt with a path to a built version of plugin-GUI
 ```
