@@ -55,7 +55,7 @@ extern "C" EXPORT int getPluginInfo(int index, Plugin::PluginInfo* info)
 		info->type = PluginType::PLUGIN_TYPE_PROCESSOR;
 
 		//Processor name
-		info->processor.name = "Test Plugin5"; //Processor name shown in the GUI
+		info->processor.name = "Matlab Filter"; //Processor name shown in the GUI
 
 		//Type of processor. Can be FilterProcessor, SourceProcessor, SinkProcessor or UtilityProcessor. Specifies where on the processor list will appear
 		info->processor.type = ProcessorType::FilterProcessor;
