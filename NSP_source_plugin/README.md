@@ -14,10 +14,10 @@ This plugin functions as a data thread to stream BlackRock Neural Signal Process
 ```
 set(ENV{GUI_BASE_DIR} /PathToFolder/plugin-GUI)
 ````
-4) Create build files using CMake https://cmake.org/
-	- Set Source folder as **'$\PathToFolder\matlab_filter'**
-	- Set Build folder as **'$\PathToFolder\matlab_filter\Build'**
-	- Configure build files for Visual Studio 2017 and x64
+2) Create build files using CMake https://cmake.org/
+	- Set Source folder as **$\NSP_Source_plugin\NSP_Source**
+	- Set Build folder as **$\NSP_Source_plugin\NSP_Source\Build**
+	- Configure build files for Visual Studio 2017 and x64 
 
 5) Open the solution file (.vxcproj) and make the following changes to the properties panel
 	- (Configuration Properties -> Debugging) Set "command" as **'$\PathToFile\open-ephys.exe'**
