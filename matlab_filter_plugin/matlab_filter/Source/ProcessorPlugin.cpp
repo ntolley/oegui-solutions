@@ -32,6 +32,11 @@ void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 	if (count == 1) {
 
 		ep = engOpen("");
+		engEvalString(ep, "decode_param = rand(96);");
+		engEvalString(ep, "figure");
+		//engEvalString(ep, "hold on");
+
+
 		count = count + 1;
 
 	}
