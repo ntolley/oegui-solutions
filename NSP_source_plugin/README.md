@@ -4,7 +4,7 @@ This plugin functions as a data thread to stream BlackRock Neural Signal Process
 ## Configuring Plugin (Visual Studio 2017)
 1) Download and install Cerebus Central Suite (v 7.0.5.0) from https://www.blackrockmicro.com/technical-support/software-downloads/
 
-2) Copy the following files from **'$\Blackrock'** and **'$\Blackrock\cbsdk\lib'**to the Debug directory of plugin-GUI (same folder as open-ephys.exe) 
+2) Copy the following files from **'$\Blackrock'** and **'$\Blackrock\cbsdk\lib'** to the Debug directory of plugin-GUI (same folder as open-ephys.exe) 
 	- cbsdkx64.dll
 	- QtCorex644.dll
 	- QtXmlx644.dll
