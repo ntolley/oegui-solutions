@@ -64,6 +64,8 @@ void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 	//Create mxArrays that will be passed to matlab engine
 	mxArray *T, *nS, *nC;
 	T = mxCreateDoubleMatrix(1, numChannels*nSamples, mxREAL);
+	//T = mxCreateDoubleMatrix(1, 98*1, mxREAL);
+
 	nS = mxCreateDoubleScalar(nSamples);
 	nC = mxCreateDoubleScalar(numChannels);
 

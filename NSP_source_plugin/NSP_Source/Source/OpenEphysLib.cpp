@@ -59,7 +59,7 @@ extern "C" EXPORT int getPluginInfo(int index, Plugin::PluginInfo* info)
 
 		info->type = Plugin::PLUGIN_TYPE_DATA_THREAD;
 		info->dataThread.name = "NSP Source"; //Name that will appear on the processor list
-		info->dataThread.creator = &createDataThread<NSPSource>;
+		info->dataThread.creator = &createDataThread<NSP::NSPSource>;
 		break;
 
 		////Type of plugin. See "Source/Processors/PluginManager/OpenEphysPlugin.h" for complete info about the different type structures
