@@ -31,8 +31,14 @@ namespace ProcessorPluginSpace
 
 		Engine *ep;
 		int count = 1;
-		std::string fileString;
-		const char *fileChar;
+
+		std::string initString;
+		const char *initChar;
+
+		std::string funcString;
+		const char *funcChar;
+
+
 
 
 		/** Indicates if the processor has a custom editor. Defaults to false */
