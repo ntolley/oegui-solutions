@@ -1,0 +1,9 @@
+load('D:\Borton Lab\Blackrock\open_ephys_decoding\decode_param.mat')
+
+chan_sel = 12;
+plot_freq = 4; %How many loop cycles until a new line is plotted
+
+figure
+
+data_buf = zeros(1000,96);
+plot_count = 0;

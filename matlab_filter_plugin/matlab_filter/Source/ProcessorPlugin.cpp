@@ -12,13 +12,13 @@ ProcessorPlugin::ProcessorPlugin() : GenericProcessor("Processor Name")
 	ep = engOpen("");
 
 	//Initialization script only run during construction
-	std::ifstream initFile{ "D:\\Borton Lab\\cpp_mat_func\\matlabFilter_init.txt" }; //reads .txt into string variable
+	std::ifstream initFile{ "D:\\Github\\oegui-solutions\\matlab_filter_plugin\\matlab_filter\\Source\\matlabFilter_init.txt" }; //reads .txt into string variable
 	initString = { std::istreambuf_iterator<char>(initFile), std::istreambuf_iterator<char>() };
 	initChar = initString.c_str(); //must convert to const char array for matlab engine
 
 
 	//Function Script to run on every loop when process() is called
-	std::ifstream funcFile{ "D:\\Borton Lab\\cpp_mat_func\\matlabPlugin.txt" }; //reads .txt into string variable
+	std::ifstream funcFile{ "D:\\Github\\oegui-solutions\\matlab_filter_plugin\\matlab_filter\\Source\\matlabPlugin.txt" }; //reads .txt into string variable
 	funcString = { std::istreambuf_iterator<char>(funcFile), std::istreambuf_iterator<char>() };
 	funcChar = funcString.c_str(); //must convert to const char array for matlab engine
 
@@ -37,32 +37,22 @@ ProcessorPlugin::~ProcessorPlugin()
 void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 {
 	// Load data for buffer
-	int numChannels = getNumOutputs();
-	//int numChannels = 10;
+	//int numChannels = getNumOutputs();
+	int numChannels = 96; //Specific to Blackrock NSP
 
-	int nSamples = buffer.getNumSamples();
+	int nSamples = getNumSamples(0); //this returns the actual number off samples in the buffer which can change every loop
+	//Using buffer.getNumSamples() just returns the size of the buffer
 
 	//Start matlab engine and read .txt file containing matlab commands on first call to process
 	if (count == 1) {
 
 		ep = engOpen("");
-		engEvalString(ep, funcChar); //reads matlab script from .txt file
-
-
-		//engEvalString(ep, "decode_param = rand(98,1);");
-		//engEvalString(ep, "load('D:\Borton Lab\Blackrock\open_ephys_decoding\decode_param.mat')");
-		//engEvalString(ep, "figure");
-		//engEvalString(ep, "hold on");
-		//engEvalString(ep, "xlim([0 100000]");
-		//engEvalString(ep, "b = [];");
+		engEvalString(ep, initChar); //reads matlab script from .txt file
 
 		//Create mxArrays that will be passed to matlab engine
-		mxArray *nS, *nC;
-		nS = mxCreateDoubleScalar(nSamples);
+		mxArray *nC;
 		nC = mxCreateDoubleScalar(numChannels);
-		engPutVariable(ep, "nSamples", nS);
 		engPutVariable(ep, "numChannels", nC);
-		mxDestroyArray(nS);
 		mxDestroyArray(nC);
 
 		count = count + 1;
@@ -90,17 +80,18 @@ void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 	}
 
 	//Create mxArrays that will be passed to matlab engine
-	mxArray *T;
+	mxArray *T, *nS;
 
 	T = mxCreateDoubleMatrix(1, numChannels*nSamples, mxREAL);
+	nS = mxCreateDoubleScalar(nSamples);
 
 	//Write buffer data to mxArray
 	double* ptr = mxGetPr(T);
 	memcpy((void*)ptr, (void*)allBuf, nSamples*numChannels * sizeof(double));
 
 	//Send array to matlab workspace
+	engPutVariable(ep, "nSamples", nS);
 	engPutVariable(ep, "T", T);
-
 
 
 
@@ -149,8 +140,8 @@ void ProcessorPlugin::process(AudioSampleBuffer& buffer)
 
 	//clear memory
 	mxDestroyArray(T);
+	mxDestroyArray(nS);
 	mxDestroyArray(resVar);
-
 
 	delete[] allBuf;
 	delete[] resBuf;

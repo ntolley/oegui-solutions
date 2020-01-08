@@ -1,0 +1,31 @@
+data_buf(1:end-nSamples,:) = data_buf(1+nSamples:end,:);
+data_buf(end-nSamples+1:end,:) = X(:,1:96);
+
+avg_buf = movmean(data_buf, 100, 1);
+
+output = avg_buf(:,1:96) * decode_param(1:96);
+
+if plot_count == plot_freq
+	subplot(2,1,1)
+	plot(data_buf(:,chan_sel),'b','LineWidth',2)
+	title(['Channel ', num2str(chan_sel), ' Firing Rate'])
+	xlim([0 1200])
+	ylim([-25 250])
+	xlabel('Samples')
+
+
+	subplot(2,1,2)
+	plot(output,'r','LineWidth',2);
+	title('Decode Output')
+	xlim([0 1200])
+	ylim([-1 1])
+	xlabel('Samples')
+
+	plot_count = 0;
+end
+
+plot_count = plot_count + 1;
+
+
+
+
