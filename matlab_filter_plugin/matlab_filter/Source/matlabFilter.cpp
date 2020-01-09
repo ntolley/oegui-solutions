@@ -1,12 +1,49 @@
 #include "matlabFilter.h"
+#include "matlabFilterEditor.h"
 #include <chrono>
 #include <thread>
 
-using namespace matlabFilterSpace;
+#include "C:/Users/tolle/Documents/GitHub/plugin-GUI/Source/AccessClass.h""
+#include "C:/Users/tolle/Documents/GitHub/plugin-GUI/Source/Audio/AudioComponent.h"
+#include "C:/Users/tolle/Documents/GitHub/plugin-GUI/Source/Processors/PluginManager/PluginManager.h"
+
 
 
 matlabFilter::matlabFilter() : GenericProcessor("Matlab Filter")
 {
+	//Load pluIn file Sources
+	//const int numFileSources = AccessClass::getPluginManager()->getNumFileSources();
+	//for (int i = 0; i < numFileSources; ++i)
+	//{
+	//	Plugin::FileSourceInfo info = AccessClass::getPluginManager()->getFileSourceInfo(i);
+
+	//	StringArray extensions;
+	//	extensions.addTokens(info.extensions, ";", "\"");
+
+	//	const int numExtensions = extensions.size();
+	//	for (int j = 0; j < numExtensions; ++j)
+	//	{
+	//		supportedExtensions.set(extensions[j].toLowerCase(), i + 1);
+	//	}
+	//}
+
+	//Load Built-in file Sources
+	//const int numBuiltInFileSources = getNumBuiltInFileSources();
+	//for (int i = 0; i < numBuiltInFileSources; ++i)
+	//{
+	//	StringArray extensions;
+	//	extensions.addTokens(getBuiltInFileSourceExtensions(i), ";", "\"");
+
+	//	const int numExtensions = extensions.size();
+	//	for (int j = 0; j < numExtensions; ++j)
+	//	{
+	//		supportedExtensions.set(extensions[j].toLowerCase(), i + numFileSources + 1);
+	//	}
+
+	//}
+
+
+	// Matlab Engine Initialization
 	Engine *ep;
 	ep = engOpen("");
 
@@ -21,10 +58,6 @@ matlabFilter::matlabFilter() : GenericProcessor("Matlab Filter")
 	funcString = { std::istreambuf_iterator<char>(funcFile), std::istreambuf_iterator<char>() };
 	funcChar = funcString.c_str(); //must convert to const char array for matlab engine
 
-
-
-
-
 }
 
 matlabFilter::~matlabFilter()
@@ -32,6 +65,143 @@ matlabFilter::~matlabFilter()
 	engEvalString(ep, "close all");
 
 }
+
+AudioProcessorEditor* matlabFilter::createEditor()
+{
+	editor = new matlabFilterEditor(this, true);
+
+	return editor;
+}
+
+bool matlabFilter::isReady()
+{
+	if (!input)
+	{
+		CoreServices::sendStatusMessage("No file selected in File Reader.");
+		return false;
+	}
+	else
+	{
+		return input->isReady();
+	}
+}
+
+void matlabFilter::setEnabledState(bool t)
+{
+	isEnabled = t;
+}
+
+String matlabFilter::getFile() const
+{
+	if (input)
+		return input->getFileName();
+	else
+		return String::empty;
+}
+
+//bool matlabFilter::setFile(String fullpath)
+//{
+//	File file(fullpath);
+//
+//	String ext = file.getFileExtension().toLowerCase().substring(1);
+//	const int index = supportedExtensions[ext] - 1;
+//	const bool isExtensionSupported = index >= 0;
+//
+//	if (isExtensionSupported)
+//	{
+//		const int index = supportedExtensions[ext] - 1;
+//		const int numPluginFileSources = AccessClass::getPluginManager()->getNumFileSources();
+//
+//		if (index < numPluginFileSources)
+//		{
+//			Plugin::FileSourceInfo sourceInfo = AccessClass::getPluginManager()->getFileSourceInfo(index);
+//			input = sourceInfo.creator();
+//		}
+//	/*	else
+//		{
+//			input = createBuiltInFileSource(index - numPluginFileSources);
+//		}*/
+//		if (!input)
+//		{
+//			std::cerr << "Error creating file source for extension " << ext << std::endl;
+//			return false;
+//		}
+//
+//	}
+//	else
+//	{
+//		CoreServices::sendStatusMessage("File type not supported");
+//		return false;
+//	}
+//
+//	if (!input->OpenFile(file))
+//	{
+//		input = nullptr;
+//		CoreServices::sendStatusMessage("Invalid file");
+//
+//		return false;
+//	}
+//
+//
+//
+//	return true;
+//}
+
+bool matlabFilter::isFileSupported(const String& fileName) const
+{
+	const File file(fileName);
+	String ext = file.getFileExtension().toLowerCase().substring(1);
+
+	return isFileExtensionSupported(ext);
+}
+
+
+bool matlabFilter::isFileExtensionSupported(const String& ext) const
+{
+	const int index = supportedExtensions[ext] - 1;
+	const bool isExtensionSupported = index >= 0;
+
+	return isExtensionSupported;
+}
+
+StringArray matlabFilter::getSupportedExtensions() const
+{
+	StringArray extensions;
+	HashMap<String, int>::Iterator i(supportedExtensions);
+	while (i.next())
+	{
+		extensions.add(i.getKey());
+	}
+	return extensions;
+
+}
+
+//int matlabFilter::getNumBuiltInFileSources() const
+//{
+//	return 1;
+//}
+
+//String matlabFilter::getBuiltInFileSourceExtensions(int index) const
+//{
+//	switch (index)
+//	{
+//	case 0: //Binary
+//		return "oebin";
+//	default:
+//		return "";
+//	}
+//}
+
+//FileSource* matlabFilter::createBuiltInFileSource(int index) const
+//{
+//	switch (index)
+//	{
+//	case 0:
+//		return new BinarySource::BinaryFileSource();
+//	default:
+//		return nullptr;
+//	}
+//}
 
 void matlabFilter::process(AudioSampleBuffer& buffer)
 {

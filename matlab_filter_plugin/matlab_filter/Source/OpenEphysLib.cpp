@@ -61,7 +61,7 @@ extern "C" EXPORT int getPluginInfo(int index, Plugin::PluginInfo* info)
 		info->processor.type = ProcessorType::FilterProcessor;
 
 		//Class factory pointer. Replace "ProcessorPluginSpace::ProcessorPlugin" with the namespace and class name.
-		info->processor.creator = &(Plugin::createProcessor<matlabFilterSpace::matlabFilter>);
+		info->processor.creator = &(Plugin::createProcessor<matlabFilter>);
 		break;
 		/**
 		Examples for other plugin types
