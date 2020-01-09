@@ -11,23 +11,18 @@
 #include <vector>
 
 
-
-
-
-//Engine *ep = engOpen("");
-//namespace must be an unique name for your plugin
-namespace ProcessorPluginSpace
+namespace matlabFilterSpace
 {
 
-	class ProcessorPlugin : public GenericProcessor
+	class matlabFilter : public GenericProcessor
 	{
 	public:
 
 		/** The class constructor, used to initialize any members. */
-		ProcessorPlugin();
+		matlabFilter();
 
 		/** The class destructor, used to deallocate memory */
-		~ProcessorPlugin();
+		~matlabFilter();
 
 		Engine *ep;
 		int count = 1;

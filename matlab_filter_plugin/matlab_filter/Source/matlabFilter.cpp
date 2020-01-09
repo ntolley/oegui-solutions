@@ -1,12 +1,11 @@
-#include "ProcessorPlugin.h"
+#include "matlabFilter.h"
 #include <chrono>
 #include <thread>
 
-using namespace ProcessorPluginSpace;
+using namespace matlabFilterSpace;
 
 
-
-ProcessorPlugin::ProcessorPlugin() : GenericProcessor("Processor Name")
+matlabFilter::matlabFilter() : GenericProcessor("Matlab Filter")
 {
 	Engine *ep;
 	ep = engOpen("");
@@ -18,7 +17,7 @@ ProcessorPlugin::ProcessorPlugin() : GenericProcessor("Processor Name")
 
 
 	//Function Script to run on every loop when process() is called
-	std::ifstream funcFile{ "D:\\Github\\oegui-solutions\\matlab_filter_plugin\\matlab_filter\\Source\\matlabPlugin.txt" }; //reads .txt into string variable
+	std::ifstream funcFile{ "D:\\Github\\oegui-solutions\\matlab_filter_plugin\\matlab_filter\\Source\\matlabFilter_func.m" }; //reads .txt into string variable
 	funcString = { std::istreambuf_iterator<char>(funcFile), std::istreambuf_iterator<char>() };
 	funcChar = funcString.c_str(); //must convert to const char array for matlab engine
 
@@ -28,13 +27,13 @@ ProcessorPlugin::ProcessorPlugin() : GenericProcessor("Processor Name")
 
 }
 
-ProcessorPlugin::~ProcessorPlugin()
+matlabFilter::~matlabFilter()
 {
 	engEvalString(ep, "close all");
 
 }
 
-void ProcessorPlugin::process(AudioSampleBuffer& buffer)
+void matlabFilter::process(AudioSampleBuffer& buffer)
 {
 	// Load data for buffer
 	//int numChannels = getNumOutputs();

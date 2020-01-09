@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <PluginInfo.h>
-#include "ProcessorPlugin.h"
+#include "matlabFilter.h"
 #include <string>
 
 #ifdef WIN32
@@ -38,7 +38,7 @@ extern "C" EXPORT void getLibInfo(Plugin::LibraryInfo* info)
 	info->apiVersion = PLUGIN_API_VER;
 
 	//Name of the Library, used only for information
-	info->name = "PLUGINLIBRARYNAME";
+	info->name = "MATLABFILTERLIBRARY";
 
 	//Version of the library, used only for information
 	info->libVersion = 1;
@@ -61,7 +61,7 @@ extern "C" EXPORT int getPluginInfo(int index, Plugin::PluginInfo* info)
 		info->processor.type = ProcessorType::FilterProcessor;
 
 		//Class factory pointer. Replace "ProcessorPluginSpace::ProcessorPlugin" with the namespace and class name.
-		info->processor.creator = &(Plugin::createProcessor<ProcessorPluginSpace::ProcessorPlugin>);
+		info->processor.creator = &(Plugin::createProcessor<matlabFilterSpace::matlabFilter>);
 		break;
 		/**
 		Examples for other plugin types
