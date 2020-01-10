@@ -39,18 +39,18 @@ public:
 	bool isFileExtensionSupported(const String& ext) const;
 	StringArray getSupportedExtensions() const;
 
-	//int getNumBuiltInFileSources() const;
-	//String getBuiltInFileSourceExtensions(int index) const;
-	//FileSource* createBuiltInFileSource(int index) const;
-
 	bool isReady()                  override;
 	//bool enable() override;
 	//bool disable() override;
 
+	
+
 
 	// Start Matlab Engine 
 	Engine *ep;
-	int count = 1;
+	int count = 1; // used to check if first loop during acquisition, reset when new file loaded
+
+	String fileString;
 
 	std::string initString;
 	const char *initChar;

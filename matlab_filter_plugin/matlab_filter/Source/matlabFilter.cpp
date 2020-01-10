@@ -7,46 +7,23 @@ matlabFilter::matlabFilter() : GenericProcessor("Matlab Filter")
 {
 	setProcessorType(PROCESSOR_TYPE_FILTER);
 	setEnabledState(false);
-	//setFile("D:\\Github\\oegui-solutions\\matlab_filter_plugin\\matlab_filter\\Source\\matlabFilter_init.txt")
 
-	//Load pluIn file Sources
-	//const int numFileSources = AccessClass::getPluginManager()->getNumFileSources();
-	//for (int i = 0; i < numFileSources; ++i)
-	//{
-	//	Plugin::FileSourceInfo info = AccessClass::getPluginManager()->getFileSourceInfo(i);
+	StringArray extensions = getSupportedExtensions();
 
-	//	StringArray extensions;
-	//	extensions.addTokens(info.extensions, ";", "\"");
+	const int numExtensions = extensions.size();
+	for (int j = 0; j < numExtensions; ++j)
+	{
+		supportedExtensions.set(extensions[j].toLowerCase(), j+1);
+	}
 
-	//	const int numExtensions = extensions.size();
-	//	for (int j = 0; j < numExtensions; ++j)
-	//	{
-	//		supportedExtensions.set(extensions[j].toLowerCase(), i + 1);
-	//	}
-	//}
-
-	//Load Built-in file Sources
-	//const int numBuiltInFileSources = getNumBuiltInFileSources();
-	//for (int i = 0; i < numBuiltInFileSources; ++i)
-	//{
-	//	StringArray extensions;
-	//	extensions.addTokens(getBuiltInFileSourceExtensions(i), ";", "\"");
-
-	//	const int numExtensions = extensions.size();
-	//	for (int j = 0; j < numExtensions; ++j)
-	//	{
-	//		supportedExtensions.set(extensions[j].toLowerCase(), i + numFileSources + 1);
-	//	}
-
-	//}
-
+	fileString = "D:\\Github\\oegui-solutions\\matlab_filter_plugin\\matlab_filter\\Source\\matlabFilter_init.txt";
 
 	// Matlab Engine Initialization
 	Engine *ep;
 	ep = engOpen("");
 
 	//Initialization script only run during construction
-	std::ifstream initFile{ "D:\\Github\\oegui-solutions\\matlab_filter_plugin\\matlab_filter\\Source\\matlabFilter_init.txt" }; //reads .txt into string variable
+	std::ifstream initFile{fileString.toStdString()}; //reads .txt into string variable
 	initString = { std::istreambuf_iterator<char>(initFile), std::istreambuf_iterator<char>() };
 	initChar = initString.c_str(); //must convert to const char array for matlab engine
 
@@ -71,18 +48,18 @@ AudioProcessorEditor* matlabFilter::createEditor()
 	return editor;
 }
 
+
 bool matlabFilter::isReady()
 {
-	if (!input)
-	{
-		CoreServices::sendStatusMessage("No file selected in File Reader.");
-		//return false;
-		return true; //Changed temporarily (Nick)
+
+	if (isFileSupported(fileString))
+	{		
+		return true;
 	}
 	else
 	{
-		//return input->isReady();
-		return true; //changed temporarily (Nick)
+		CoreServices::sendStatusMessage("No file selected in File Reader.");
+		return false;
 	}
 }
 
@@ -93,15 +70,21 @@ void matlabFilter::setEnabledState(bool t)
 
 String matlabFilter::getFile() const
 {
-	if (input)
-		return input->getFileName();
-	else
-		return String::empty;
+	File file(fileString);
+	return file.getFileName();
 }
 
 bool matlabFilter::setFile(String fullpath)
 {
 	File file(fullpath);
+	fileString = fullpath;
+
+	std::ifstream initFile{ fileString.toStdString() }; //reads .txt into string variable
+	initString = { std::istreambuf_iterator<char>(initFile), std::istreambuf_iterator<char>() };
+	initChar = initString.c_str(); //must convert to const char array for matlab engine
+
+	count = 1; //Reset loop count
+
 
 	String ext = file.getFileExtension().toLowerCase().substring(1);
 	const int index = supportedExtensions[ext] - 1;
@@ -109,23 +92,7 @@ bool matlabFilter::setFile(String fullpath)
 
 	if (isExtensionSupported)
 	{
-		const int index = supportedExtensions[ext] - 1;
-		//const int numPluginFileSources = AccessClass::getPluginManager()->getNumFileSources();
-
-		//if (index < numPluginFileSources)
-		//{
-		//	Plugin::FileSourceInfo sourceInfo = AccessClass::getPluginManager()->getFileSourceInfo(index);
-		//	input = sourceInfo.creator();
-		//}
-	/*	else
-		{
-			input = createBuiltInFileSource(index - numPluginFileSources);
-		}*/
-		if (!input)
-		{
-			std::cerr << "Error creating file source for extension " << ext << std::endl;
-			return false;
-		}
+		return true;
 
 	}
 	else
@@ -133,15 +100,6 @@ bool matlabFilter::setFile(String fullpath)
 		CoreServices::sendStatusMessage("File type not supported");
 		return false;
 	}
-
-	if (!input->OpenFile(file))
-	{
-		input = nullptr;
-		CoreServices::sendStatusMessage("Invalid file");
-
-		return false;
-	}
-
 
 
 	return true;
@@ -176,32 +134,6 @@ StringArray matlabFilter::getSupportedExtensions() const
 
 }
 
-//int matlabFilter::getNumBuiltInFileSources() const
-//{
-//	return 1;
-//}
-
-//String matlabFilter::getBuiltInFileSourceExtensions(int index) const
-//{
-//	switch (index)
-//	{
-//	case 0: //Binary
-//		return "oebin";
-//	default:
-//		return "";
-//	}
-//}
-
-//FileSource* matlabFilter::createBuiltInFileSource(int index) const
-//{
-//	switch (index)
-//	{
-//	case 0:
-//		return new BinarySource::BinaryFileSource();
-//	default:
-//		return nullptr;
-//	}
-//}
 
 void matlabFilter::process(AudioSampleBuffer& buffer)
 {
