@@ -9,8 +9,9 @@
 #include <sstream>
 #include <iterator>
 #include <vector>
+#include <FileSourceHeaders.h>
 
-#include "FileSource.h"
+//#include "FileSource.h"
 
 
 
@@ -32,7 +33,7 @@ public:
 	void setEnabledState(bool t)  override;
 
 	String getFile() const;
-	//bool setFile(String fullpath);
+	bool setFile(String fullpath);
 
 	bool isFileSupported(const String& filename) const;
 	bool isFileExtensionSupported(const String& ext) const;

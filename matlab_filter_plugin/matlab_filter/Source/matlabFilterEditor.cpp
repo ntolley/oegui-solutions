@@ -1,6 +1,7 @@
 
 #include "matlabFilterEditor.h"
 #include "matlabFilter.h"
+#include <CoreServicesHeader.h>
 #include <stdio.h>
 
 matlabFilterEditor::matlabFilterEditor(GenericProcessor* parentNode, bool useDefaultParameterEditors = true)
@@ -25,17 +26,18 @@ matlabFilterEditor::matlabFilterEditor(GenericProcessor* parentNode, bool useDef
 	recordSelector->addListener(this);
 	addAndMakeVisible(recordSelector);
 
-	currentTime = new DualTimeComponent(this, false);
-	currentTime->setBounds(5, 80, 175, 20);
-	addAndMakeVisible(currentTime);
+	//currentTime = new DualTimeComponent(this, false);
+	//currentTime->setBounds(5, 80, 175, 20);
+	//addAndMakeVisible(currentTime);
 
-	timeLimits = new DualTimeComponent(this, true);
-	timeLimits->setBounds(5, 105, 175, 20);
-	addAndMakeVisible(timeLimits);
+	//timeLimits = new DualTimeComponent(this, true);
+	//timeLimits->setBounds(5, 105, 175, 20);
+	//addAndMakeVisible(timeLimits);
 
 	desiredWidth = 180;
 
 	setEnabledState(false);
+
 }
 
 
@@ -44,25 +46,25 @@ matlabFilterEditor::~matlabFilterEditor()
 }
 
 
-//void matlabFilterEditor::setFile(String file)
-//{
-//	File fileToRead(file);
-//	lastFilePath = fileToRead.getParentDirectory();
-//
-//	if (mFilter->setFile(fileToRead.getFullPathName()))
-//	{
-//		fileNameLabel->setText(fileToRead.getFileName(), dontSendNotification);
-//
-//		setEnabledState(true);
-//	}
-//	else
-//	{
-//		clearEditor();
-//	}
-//
-//	CoreServices::updateSignalChain(this);
-//	repaint();
-//}
+void matlabFilterEditor::setFile(String file)
+{
+	File fileToRead(file);
+	lastFilePath = fileToRead.getParentDirectory();
+
+	if (mFilter->setFile(fileToRead.getFullPathName()))
+	{
+		fileNameLabel->setText(fileToRead.getFileName(), dontSendNotification);
+
+		setEnabledState(true);
+	}
+	else
+	{
+		clearEditor();
+	}
+
+	CoreServices::updateSignalChain(this);
+	repaint();
+}
 
 
 void matlabFilterEditor::paintOverChildren(Graphics& g)
@@ -100,7 +102,7 @@ void matlabFilterEditor::buttonEvent(Button* button)
 			if (chooseFileReaderFile.browseForFileToOpen())
 			{
 				// Use the selected file
-				//setFile(chooseFileReaderFile.getResult().getFullPathName());
+				setFile(chooseFileReaderFile.getResult().getFullPathName());
 
 				// lastFilePath = fileToRead.getParentDirectory();
 
@@ -134,21 +136,21 @@ bool matlabFilterEditor::setPlaybackStopTime(unsigned int ms)
 }
 
 
-void matlabFilterEditor::setTotalTime(unsigned int ms)
-{
-	timeLimits->setTimeMilliseconds(0, 0);
-	timeLimits->setTimeMilliseconds(1, ms);
-	currentTime->setTimeMilliseconds(0, 0);
-	currentTime->setTimeMilliseconds(1, ms);
+//void matlabFilterEditor::setTotalTime(unsigned int ms)
+//{
+//	timeLimits->setTimeMilliseconds(0, 0);
+//	timeLimits->setTimeMilliseconds(1, ms);
+//	currentTime->setTimeMilliseconds(0, 0);
+//	currentTime->setTimeMilliseconds(1, ms);
+//
+//	recTotalTime = ms;
+//}
 
-	recTotalTime = ms;
-}
 
-
-void matlabFilterEditor::setCurrentTime(unsigned int ms)
-{
-	currentTime->setTimeMilliseconds(0, ms);
-}
+//void matlabFilterEditor::setCurrentTime(unsigned int ms)
+//{
+//	currentTime->setTimeMilliseconds(0, ms);
+//}
 
 
 void matlabFilterEditor::comboBoxChanged(ComboBox* combo)
@@ -163,26 +165,21 @@ void matlabFilterEditor::clearEditor()
 	fileNameLabel->setText("No file selected.", dontSendNotification);
 	recordSelector->clear(dontSendNotification);
 
-	timeLimits->setTimeMilliseconds(0, 0);
-	timeLimits->setTimeMilliseconds(1, 0);
-	currentTime->setTimeMilliseconds(0, 0);
-	currentTime->setTimeMilliseconds(1, 0);
-
 	setEnabledState(false);
 }
 
-
+//
 void matlabFilterEditor::startAcquisition()
 {
 	recordSelector->setEnabled(false);
-	timeLimits->setEnable(false);
+	//timeLimits->setEnable(false);
 }
 
 
 void matlabFilterEditor::stopAcquisition()
 {
 	recordSelector->setEnabled(true);
-	timeLimits->setEnable(true);
+	//timeLimits->setEnable(true);
 }
 
 
@@ -207,7 +204,7 @@ void matlabFilterEditor::loadCustomParameters(XmlElement* xml)
 		if (element->hasTagName("FILENAME"))
 		{
 			String filepath = element->getStringAttribute("path");
-			//setFile(filepath);
+			setFile(filepath);
 
 			int recording = element->getIntAttribute("recording");
 			recordSelector->setSelectedId(recording, sendNotificationSync);

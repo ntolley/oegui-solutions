@@ -38,13 +38,13 @@ public:
 
 	bool setPlaybackStartTime(unsigned int ms);
 	bool setPlaybackStopTime(unsigned int ms);
-	void setTotalTime(unsigned int ms);
-	void setCurrentTime(unsigned int ms);
+	//void setTotalTime(unsigned int ms);
+	//void setCurrentTime(unsigned int ms);
 
 	void startAcquisition() override;
 	void stopAcquisition()  override;
 
-	//void setFile(String file);
+	void setFile(String file);
 
 	void comboBoxChanged(ComboBox* combo);
 	//void populateRecordings(FileSource* source);
